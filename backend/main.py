@@ -15,17 +15,23 @@ def search_suppliers():
     TODO: Реализовать поиск по ИНН или по тексту продажи.
     TODO: Реализовать возврат в формате данных о поставщике вместе с его рейтигном (рейтинг надо считать)
     """
-
+    
+    result = ''
     
     inn = request.args.get('inn')
     kpgz = request.args.get('kpgz')
-    data = []
 
-    suppliers = Supplier.search(db.session(), inn, kpgz)
+    if inn or kpgz:
+        data = []
 
-    data = [{
-        'inn': inn[0]
-    } for inn in suppliers ]
+        suppliers = Supplier.search(db.session(), inn, kpgz)
 
+        data = [{
+            'inn': supp[0],
+            'kpgz': supp[1]
+        } for supp in suppliers ]
 
-    return jsonify(data)
+        result = jsonify(data)
+
+    
+    return result

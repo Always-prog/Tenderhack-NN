@@ -13,25 +13,19 @@ class Supplier:
     @staticmethod
     def search(db, inn: str, kpgz: str):
         suppliers = None
-        if inn and kpgz:
-            # suppliers = db.query(Contracts.supplier_inn, Contracts.ks.ks_id) \
-            #     .filter(Contracts.supplier_inn == inn) \
-            #     .group_by(Contracts.supplier_inn).all()
-            suppliers = db.query(Contracts.supplier_inn, Ks.participant_inn).join(Ks, Contracts.supplier_inn == Ks.participant_inn) \
-                .group_by(Contracts.supplier_inn, Ks.participant_inn).limit(100).all()
-
-        elif inn and not kpgz:
-            suppliers = db.query(Contracts.supplier_inn) \
-                .filter_by(supplier_inn=int(inn)) \
-                .group_by(Contracts.supplier_inn).all()
         
-        elif not inn and kpgz:
-            suppliers = db.query(Ks.participant_inn) \
-                .filter_by(kpgz=kpgz) \
-                .group_by(Ks.participant_inn).all()
+        suppliers = db.query(Contracts.supplier_inn, Ks.kpgz) \
+        .join(Ks, Contracts.ks_id == Ks.ks_id)
+                
+        if inn:
+            suppliers = suppliers.filter(Contracts.supplier_inn == int(inn)) 
         
+        if kpgz:
+            suppliers = suppliers.filter(Ks.kpgz==kpgz)
+        suppliers = suppliers.group_by(Contracts.supplier_inn, Ks.kpgz).limit(100)
+        print(str(suppliers))
         
-        return suppliers
+        return suppliers.all()
 
 
     def calc_supplier_rating(self, db, experience_weight, reliability_weight, activity_weight, speedily_weight):
