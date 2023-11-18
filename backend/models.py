@@ -2,8 +2,9 @@
 
 # Подключить используя SQLAlchemy таблички поставщиков
 
-from sqlalchemy import Column, Integer, Numeric,String, TIMESTAMP, Text, Boolean
+from sqlalchemy import Column, ForeignKey, Integer, Numeric,String, TIMESTAMP, Text, Boolean
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
 
 Base = declarative_base()
 
@@ -21,6 +22,8 @@ class Contracts(Base):
     supplier_kpp = Column(Integer)
     violations = Column(Text)
     status = Column(Boolean)
+
+    ks = relationship("Ks", uselist=False, backref="Contracts")
 
 
 class Blocking(Base):
@@ -53,7 +56,7 @@ class Ks(Base):
     participant_inn = Column(Integer)
     participant_kpp = Column(Integer)
     is_winner = Column(Boolean)
-    ks_id = Column(Integer, primary_key=True)
+    ks_id = Column(Integer, ForeignKey("Contracts.ks_id"), primary_key=True)
     publish_date = Column(TIMESTAMP)
     price = Column(Numeric)
     customer_inn = Column(Integer)
@@ -65,3 +68,5 @@ class Ks(Base):
     items = Column(Text)
     region_code = Column(Integer)
     violations = Column(Text)
+
+    

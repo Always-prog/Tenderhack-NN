@@ -11,9 +11,32 @@ class Supplier:
         self.inn = supplier_inn
 
     @staticmethod
-    def search_suppliers(db, q: int or str):
+    def search(db, inn: str, kpgz: str):
+        if inn and kpgz:
+            suppliers = db.query(Contracts.supplier_inn, Contracts.ks.ks_id) \
+            .filter(Contracts.supplier_inn == inn) \
+            .group_by(Contracts.supplier_inn, Contracts.ks.participant_inn).all()
+        
+        return suppliers
+
+    @staticmethod
+    def search_suppliers(db, q: str):
         # Должен найти тут разницу между ИНН, и вернуть список поставщиков
-        pass
+        suppliers = db.query(Contracts.supplier_inn) \
+                .filter_by(supplier_inn=int(q)) \
+                .group_by(Contracts.supplier_inn).all()
+
+        return suppliers
+    
+    @staticmethod
+    def search_kpgz(db, k: str):
+        # Должен найти тут разницу между ИНН, и вернуть список поставщиков
+        suppliers = db.query(Ks.participant_inn) \
+                .filter_by(kpgz=k) \
+                .group_by(Ks.participant_inn).all()
+
+        return suppliers
+
 
     def calc_supplier_rating(self, db, experience_weight, reliability_weight, activity_weight, speedily_weight):
         """
