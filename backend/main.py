@@ -37,7 +37,7 @@ def search_suppliers():
 @app.route("/compare/bymarket", methods=["GET"])
 def compare_bymarket():
     """
-    На вход приходит inn и фильтр по kpgz (не обязательно).
+    На вход приходит inn и фильтр по kpgz (обязательно).
     TODO: Реализовать сравнение с рынком возврат данных в формате {
         "target_inn": <исконный ИНН>,
         "target_avg_price": средняя цена по ИНН,
@@ -45,7 +45,17 @@ def compare_bymarket():
     }
     """
 
-    return ''
+    result = ''
+
+    target_inn = request.args.get('inn')
+    kpgz = request.args.get('kpgz')
+
+    target_avg_price = Supplier.avg_price(db.session(), target_inn, kpgz)
+    print(target_avg_price)
+
+    result = target_avg_price
+
+    return result
 
 
 @app.route("/compare/bygroup", methods=["GET"])
