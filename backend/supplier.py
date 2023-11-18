@@ -1,3 +1,5 @@
+from sqlalchemy import func
+
 from models import Contracts, Ks, ContractExecution
 
 
@@ -27,6 +29,8 @@ class Supplier:
         
         return suppliers.all()
 
+    def avg_price(self, db):
+        return db.query(func.avg(Contracts.price)).filter(Contracts.supplier_inn == self.inn).all()[0]
 
     def calc_supplier_rating(self, db, experience_weight, reliability_weight, activity_weight, speedily_weight):
         """
