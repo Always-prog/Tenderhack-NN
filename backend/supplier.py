@@ -7,14 +7,15 @@ class Supplier:
     В задачи класса будет входить поиск по поставщикам и расчет рейтинга.
     Используется этот класс в конечных точках
     """
-    def __init__(self, supplier_inn: int, db):
+    def __init__(self, supplier_inn: int):
         self.inn = supplier_inn
-        self.db = db
 
-    def get_contracts(self):
-        return self.db.query(Contracts).limit(5).all()
+    @staticmethod
+    def search_suppliers(db, q: int or str):
+        # Должен найти тут разницу между ИНН, и вернуть список поставщиков
+        pass
 
-    def calc_supplier_rating(self, experience_weight, reliability_weight, activity_weight, speedily_weight):
+    def calc_supplier_rating(self, db, experience_weight, reliability_weight, activity_weight, speedily_weight):
         """
         1. Опыт. Есть ли хоть один успешно заверешнных контракт
         2. Надежность.
