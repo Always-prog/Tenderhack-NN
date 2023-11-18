@@ -22,8 +22,6 @@ def search_suppliers():
     kpgz = request.args.get('kpgz')
 
     if inn or kpgz:
-        data = []
-
         suppliers = Supplier.search(db.session(), inn, kpgz)
 
         data = [{
@@ -33,5 +31,35 @@ def search_suppliers():
 
         result = jsonify(data)
 
-    
     return result
+
+
+@app.route("/compare/bymarket", methods=["GET"])
+def compare_bymarket():
+    """
+    На вход приходит inn и фильтр по kpgz (не обязательно).
+    TODO: Реализовать сравнение с рынком возврат данных в формате {
+        "target_inn": <исконный ИНН>,
+        "target_avg_price": средняя цена по ИНН,
+        "market_avg_price": средняя цена по рынку
+    }
+    """
+
+    return ''
+
+
+@app.route("/compare/bygroup", methods=["GET"])
+def compare_bygroup():
+    """
+    на выход список INN через запятую и фильтр по kpgz
+    TODO: Реализовать сравнение друг с другом. Ровно как и с маркетом, только сравнение нужно делать каждого,
+    и среди среза внутри пришедших ИНН.
+    Результат должен быть вида: [
+    {inn: инн, avg_price: цена},
+    {inn: инн2, avg_price: цена},
+    {inn: инн3, avg_price: цена},
+    ]
+    """
+
+    return ''
+
