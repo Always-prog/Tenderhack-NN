@@ -29,6 +29,18 @@ class Supplier:
         
         return suppliers.all()
 
+    def get_expirience_metric(self, db, weight):
+        experienc = len(
+            db.query(Contracts)
+            .filter_by(supplier_inn=self.inn)
+            .filter_by(status='Исполнен')
+            .all()
+        )
+        experience = weight if experienc > 0 else 0
+
+        return experience
+
+
     def avg_price(self, db):
         return db.query(func.avg(Contracts.price)).filter(Contracts.supplier_inn == self.inn).all()[0]
 
