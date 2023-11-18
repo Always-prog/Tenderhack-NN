@@ -1,12 +1,7 @@
 from flask import request, jsonify
-# TODO:
-"""
-1. Реализовать подключение к таблицам баз данных контрактов через SQLAlchemy.
-2. Реализовать поиск по фильтрам
-"""
 from app import db, app
-from supplier import Supplier
-import numpy
+from models import Contracts
+from supplier import Supplier, search_suppliers_by_kpgzs
 
 
 @app.route("/search", methods=["GET"])
@@ -19,17 +14,13 @@ def search_suppliers():
     result = ''
     
     inn = request.args.get('inn')
-    kpgz = request.args.get('kpgz')
+    kpgzs = request.args.get('kpgzs', '').split(',')
 
-    if inn or kpgz:
-        suppliers = Supplier.search(db.session(), inn, kpgz)
+    if inn:
+        return Supplier(int(inn)).supplier_info
 
-        data = [{
-            'inn': supp[0],
-            'kpgz': supp[1]
-        } for supp in suppliers ]
-
-        result = jsonify(data)
+    if kpgzs:
+        result = jsonify([s.supplier_info for s in search_suppliers_by_kpgzs(kpgzs)])
 
     return result
 
@@ -50,8 +41,9 @@ def compare_bymarket():
     target_inn = request.args.get('inn')
     kpgz = request.args.get('kpgz')
 
+    target_supplier = Supplier.search_by_filters(target_inn, kpgz)[0]['avg_price']
+
     target_avg_price = Supplier.avg_price(db.session(), target_inn, kpgz)
-    print(target_avg_price)
 
     result = target_avg_price
 
@@ -70,6 +62,9 @@ def compare_bygroup():
     {inn: инн3, avg_price: цена},
     ]
     """
+
+    print(db.session().query(Contracts).limit(1).all()[0].ks)
+    return ''
 
     return ''
 

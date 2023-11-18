@@ -1,6 +1,21 @@
+from typing import List
+
 from sqlalchemy import func
 
+from app import db
 from models import Contracts, Ks, ContractExecution
+
+
+def search_suppliers_by_kpgzs(kpgzs: List[str]):
+    if not kpgzs:
+        return []
+
+    query = db.session.query(Contracts.supplier_inn, Ks.kpgz).join(Ks, Contracts.ks_id == Ks.ks_id)
+    query = query.group_by(Contracts.supplier_inn, Ks.kpgz)
+    query = query.filter(Ks.kpgz.in_(kpgzs))
+    query = query.limit(100)
+
+    return [Supplier(row[0]) for row in query.all()]
 
 
 class Supplier:
@@ -9,97 +24,79 @@ class Supplier:
     В задачи класса будет входить поиск по поставщикам и расчет рейтинга.
     Используется этот класс в конечных точках
     """
+
     def __init__(self, supplier_inn: int):
         self.inn = supplier_inn
 
-    @staticmethod
-    def search(db, inn: str, kpgz: str):
-        suppliers = None
-        
-        suppliers = db.query(Contracts.supplier_inn, Ks.kpgz) \
-            .join(Ks, Contracts.ks_id == Ks.ks_id)
-                
-        if inn:
-            suppliers = suppliers.filter(Contracts.supplier_inn == int(inn)) 
-        
-        if kpgz:
-            suppliers = suppliers.filter(Ks.kpgz==kpgz)
-        suppliers = suppliers.group_by(Contracts.supplier_inn, Ks.kpgz).limit(100)
-        print(str(suppliers))
-        
-        return suppliers.all()
+    @property
+    def supplier_info(self):
+        kpgzs = [row[1] for row in db.session.query(Contracts, Ks.kpgz) \
+            .join(Ks, Contracts.ks_id == Ks.ks_id) \
+            .filter(Contracts.supplier_inn == self.inn) \
+            .all()]
+
+        return {
+            'supplier_inn': self.inn,
+            'kpgzs': kpgzs,
+            'activity': self.activity_metric(),
+            'speedily': self.speedily_metric(),
+            'experience': self.experience_metric(),
+            'reliability': self.reliability_metric()
+        }
 
     @staticmethod
     def avg_price(db, inn: str, kpgz: str):
         result = db.query(func.avg((Contracts.price) \
-            .join(Ks, Contracts.ks_id == Ks.ks_id) \
-            .filter(Contracts.supplier_inn == int(inn)) \
-            .filter(Ks.kpgz == kpgz)))
+                                   .join(Ks, Contracts.ks_id == Ks.ks_id) \
+                                   .filter(Contracts.supplier_inn == int(inn)) \
+                                   .filter(Ks.kpgz == kpgz)))
         return result
-        # return db.query(func.avg(Contracts.price)).filter(Contracts.supplier_inn == self.inn).all()[0]
-    def get_expirience_metric(self, db, weight):
-        experienc = len(
-            db.query(Contracts)
+
+    def experience_metric(self, weight=25):
+        """Опыт"""
+        has_experience = len(
+            db.session.query(Contracts)
             .filter_by(supplier_inn=self.inn)
             .filter_by(status='Исполнен')
             .all()
-        )
-        experience = weight if experienc > 0 else 0
-
-        return experience
-
-
-    def avg_price(self, db):
-        return db.query(func.avg(Contracts.price)).filter(Contracts.supplier_inn == self.inn).all()[0]
-
-    def calc_supplier_rating(self, db, experience_weight, reliability_weight, activity_weight, speedily_weight):
-        """
-        1. Опыт. Есть ли хоть один успешно заверешнных контракт
-        2. Надежность.
-        3. Активность.
-        4. Срок доставки.
-        """
-
-        # TODO: Сделать покрасивее
-        reliability = 0
-
-        is_have_any_finished_contract = len(
-            self.db.query(Contracts) \
-                .filter_by(supplier_inn=self.inn) \
-                .filter_by(status='Исполнен').all()
         ) > 0
+        return weight if has_experience else 0
 
-        experience = experience_weight if is_have_any_finished_contract else 0
-
+    def reliability_metric(self, weight=25):
+        """Надежность"""
+        reliability = 0
         has_ks_violations = len(
-            self.db.query(Ks) \
+            db.session.query(Ks) \
                 .filter_by(participant_inn=self.inn) \
                 .filter_by(violations='Да').all()
         ) > 0
 
         has_contracts_violations = len(
-            self.db.query(Ks) \
+            db.session.query(Ks) \
                 .filter_by(participant_inn=self.inn) \
                 .filter_by(violations='Да').all()
         ) > 0
 
         reliability += 0 if has_ks_violations else 0.5
         reliability += 0 if has_contracts_violations else 0.5
+        return reliability * weight
 
+    def activity_metric(self, weight=25):
+        """Активность"""
         is_have_any_activity = len(
-            self.db.query(Ks) \
+            db.session.query(Ks) \
                 .filter_by(participant_inn=self.inn).all()
         ) > 0
 
-        activity = activity_weight if is_have_any_activity else 0
+        return weight if is_have_any_activity else 0
 
+    def speedily_metric(self, weight=25):
+        """Скорость поставки"""
         is_speedily = len(
-            self.db.query(ContractExecution) \
+            db.session.query(ContractExecution) \
                 .filter_by(supplier_inn=self.inn)
                 .filter(ContractExecution.actual_delivery_date < ContractExecution.scheduled_delivery_date)
                 .all()
         ) > 0
 
-        speedily = (1 if is_speedily else 0) * speedily_weight
-
-        return experience, reliability, activity, speedily
+        return weight if is_speedily else 0

@@ -12,7 +12,6 @@ Base = declarative_base()
 class Contracts(Base):
     __tablename__ = 'contracts'
 
-    ks_id = Column(Integer, unique=True)
     contract_id = Column(Integer, primary_key=True, unique=True)
     conclusion_date = Column(TIMESTAMP)
     price = Column(Numeric)
@@ -25,6 +24,12 @@ class Contracts(Base):
 
     ks_id = Column(Integer, ForeignKey('ks.ks_id'), unique=True)
     ks = relationship("Ks", uselist=False, backref="Contracts", viewonly=True)
+
+    def to_supplier_json(self):
+        return {
+            'supplier_inn': self.supplier_inn,
+            'supplier_kpp': self.supplier_kpp,
+        }
 
 
 class Blocking(Base):
@@ -71,5 +76,14 @@ class Ks(Base):
     violations = Column(Text)
 
     contracts = relationship("Contracts", uselist=False, backref="Ks", viewonly=True)
+
+    def to_json(self):
+        return {
+            'customer_inn': self.customer_inn,
+            'customer_kpp': self.customer_kpp,
+            'price': self.price,
+            'kpgz': self.kpgz,
+            'name': self.name,
+        }
 
     
