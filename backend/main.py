@@ -1,6 +1,8 @@
 from flask import request, jsonify
+from sqlalchemy import func
+
 from app import db, app
-from models import Contracts
+from models import Contracts, Ks
 from supplier import Supplier, search_suppliers_by_kpgzs
 
 
@@ -14,7 +16,9 @@ def search_suppliers():
     result = ''
     
     inn = request.args.get('inn')
-    kpgzs = request.args.get('kpgzs', '').split(',')
+    kpgzs = request.args.get('kpgzs')
+    if kpgzs:
+        kpgzs = kpgzs.split(',')
 
     if inn:
         return Supplier(int(inn)).supplier_info
@@ -36,18 +40,25 @@ def compare_bymarket():
     }
     """
 
-    result = ''
-
     target_inn = request.args.get('inn')
-    kpgz = request.args.get('kpgz')
+    kpgzs = request.args.get('kpgzs')
+    if kpgzs:
+        kpgzs = kpgzs.split(',')
 
-    target_supplier = Supplier.search_by_filters(target_inn, kpgz)[0]['avg_price']
+    target_query = db.session.query(func.avg(Contracts.price)).join(Ks, Contracts.ks_id == Ks.ks_id)
+    market_query = db.session.query(func.avg(Contracts.price)).join(Ks, Contracts.ks_id == Ks.ks_id)
 
-    target_avg_price = Supplier.avg_price(db.session(), target_inn, kpgz)
+    target_query = target_query.filter(Contracts.supplier_inn == int(target_inn))
 
-    result = target_avg_price
+    if kpgzs:
+        target_query = target_query.filter(Ks.kpgz.in_(kpgzs))
+        market_query = market_query.filter(Ks.kpgz.in_(kpgzs))
 
-    return result
+    return {
+        'target_inn': target_inn,
+        'target_avg_price': target_query.all()[0][0],
+        'market_avg_price': market_query.all()[0][0]
+    }
 
 
 @app.route("/compare/bygroup", methods=["GET"])
@@ -63,8 +74,24 @@ def compare_bygroup():
     ]
     """
 
-    print(db.session().query(Contracts).limit(1).all()[0].ks)
-    return ''
+    inns = request.args.get('inns')
+    kpgzs = request.args.get('kpgzs')
+    if not inns:
+        return []
 
-    return ''
+    inns = [int(inn) for inn in inns.split(',')]
 
+    if kpgzs:
+        kpgzs = kpgzs.split(',')
+
+    query = db.session.query(Contracts.supplier_inn, func.avg(Contracts.price)).join(Ks, Contracts.ks_id == Ks.ks_id)
+    query = query.group_by(Contracts.supplier_inn)
+    query = query.filter(Contracts.supplier_inn.in_(inns))
+
+    if kpgzs:
+        query = query.filter(Ks.kpgz.in_(kpgzs))
+
+    return [{
+        'inn': row[0],
+        'avg_price': row[1],
+    } for row in query.all()]
