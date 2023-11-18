@@ -13,11 +13,13 @@ class Supplier:
     @staticmethod
     def search(db, inn: str, kpgz: str):
         if inn and kpgz:
-            suppliers = db.query(Contracts.supplier_inn, Contracts.ks.ks_id) \
-            .filter(Contracts.supplier_inn == inn) \
-            .group_by(Contracts.supplier_inn, Contracts.ks.participant_inn).all()
-        
-        return suppliers
+            # suppliers = db.query(Contracts.supplier_inn, Contracts.ks.ks_id) \
+            #     .filter(Contracts.supplier_inn == inn) \
+            #     .group_by(Contracts.supplier_inn).all()
+            suppliers = db.query(Contracts.supplier_inn, Ks.participant_inn).join(Ks, Contracts.supplier_inn == Ks.participant_inn) \
+                .group_by(Contracts.supplier_inn, Ks.participant_inn).limit(100).all()
+
+            return suppliers
 
     @staticmethod
     def search_suppliers(db, q: str):

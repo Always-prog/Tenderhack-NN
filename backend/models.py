@@ -23,7 +23,8 @@ class Contracts(Base):
     violations = Column(Text)
     status = Column(Boolean)
 
-    ks = relationship("Ks", uselist=False, backref="Contracts")
+    ks_id = Column(Integer, ForeignKey('ks.ks_id'), unique=True)
+    ks = relationship("Ks", uselist=False, backref="Contracts", viewonly=True)
 
 
 class Blocking(Base):
@@ -56,7 +57,7 @@ class Ks(Base):
     participant_inn = Column(Integer)
     participant_kpp = Column(Integer)
     is_winner = Column(Boolean)
-    ks_id = Column(Integer, ForeignKey("Contracts.ks_id"), primary_key=True)
+    ks_id = Column(Integer, primary_key=True)
     publish_date = Column(TIMESTAMP)
     price = Column(Numeric)
     customer_inn = Column(Integer)
@@ -68,5 +69,7 @@ class Ks(Base):
     items = Column(Text)
     region_code = Column(Integer)
     violations = Column(Text)
+
+    contracts = relationship("Contracts", uselist=False, backref="Ks", viewonly=True)
 
     

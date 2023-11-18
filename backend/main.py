@@ -23,11 +23,9 @@ def search_suppliers():
 
     suppliers = Supplier.search(db.session(), inn, kpgz)
 
-    print(suppliers)
-
     data = [{
-        'inn': supplier.supplier_inn
-    } for supplier in suppliers ]
+        'inn': inn[0]
+    } for inn in suppliers ]
 
     # if q:
     #     suppliers = Supplier.search_suppliers(db.session(), q)
