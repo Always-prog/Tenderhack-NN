@@ -12,6 +12,7 @@ class Supplier:
 
     @staticmethod
     def search(db, inn: str, kpgz: str):
+        suppliers = None
         if inn and kpgz:
             # suppliers = db.query(Contracts.supplier_inn, Contracts.ks.ks_id) \
             #     .filter(Contracts.supplier_inn == inn) \
@@ -19,24 +20,17 @@ class Supplier:
             suppliers = db.query(Contracts.supplier_inn, Ks.participant_inn).join(Ks, Contracts.supplier_inn == Ks.participant_inn) \
                 .group_by(Contracts.supplier_inn, Ks.participant_inn).limit(100).all()
 
-            return suppliers
-
-    @staticmethod
-    def search_suppliers(db, q: str):
-        # Должен найти тут разницу между ИНН, и вернуть список поставщиков
-        suppliers = db.query(Contracts.supplier_inn) \
-                .filter_by(supplier_inn=int(q)) \
+        elif inn and not kpgz:
+            suppliers = db.query(Contracts.supplier_inn) \
+                .filter_by(supplier_inn=int(inn)) \
                 .group_by(Contracts.supplier_inn).all()
-
-        return suppliers
-    
-    @staticmethod
-    def search_kpgz(db, k: str):
-        # Должен найти тут разницу между ИНН, и вернуть список поставщиков
-        suppliers = db.query(Ks.participant_inn) \
-                .filter_by(kpgz=k) \
+        
+        elif not inn and kpgz:
+            suppliers = db.query(Ks.participant_inn) \
+                .filter_by(kpgz=kpgz) \
                 .group_by(Ks.participant_inn).all()
-
+        
+        
         return suppliers
 
 

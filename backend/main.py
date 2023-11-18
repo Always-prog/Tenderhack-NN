@@ -27,19 +27,5 @@ def search_suppliers():
         'inn': inn[0]
     } for inn in suppliers ]
 
-    # if q:
-    #     suppliers = Supplier.search_suppliers(db.session(), q)
-    #     data += [{
-    #         'inn': supplier.supplier_inn
-    #     } for supplier in suppliers ]    
-    
-    # if k:
-    #     suppliers = Supplier.search_kpgz(db.session(), k)
-    #     data += [{
-    #         'inn': supplier.participant_inn
-    #     } for supplier in suppliers ]
-
-    #print(data)
-
 
     return jsonify(data)
