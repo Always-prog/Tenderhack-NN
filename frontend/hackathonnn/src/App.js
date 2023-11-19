@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import Search from './components/search';
+import Filter from './components/filter';
+import ListItems from './components/listItem';
+import { Box } from '@mui/material';
 
 const sendHttpRequest = async (url, method, data, headers) => {
   try {
@@ -35,22 +39,14 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <h1>HTTP Request Demo</h1>
-      <div>
-        <label>
-          Enter Request URL:
-          <input type="text" value={requestUrl} onChange={handleUrlChange} />
-        </label>
-        <button onClick={fetchData}>Send Request</button>
-      </div>
-      <h2>Response Data:</h2>
-      {responseData ? (
-        <pre>{JSON.stringify(responseData, null, 2)}</pre>
-      ) : (
-        <p>No data available. Make a request above.</p>
-      )}
-    </div>
+<div className='App'>
+<Search />
+<Box display='flex' flexDirection='row'>
+<Filter />
+<ListItems />
+</Box>
+</div>
+
   );
 }
 
