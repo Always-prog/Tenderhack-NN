@@ -9,27 +9,25 @@ function App() {
   const [filters, setFilters] = useState({});
   const [kpgzs, setKpgzs] = useState();
   const [inn, setInn] = useState();
-  const handleChangeKpgzs = useCallback(
-    (newKpgzs) => {
-      setKpgzs(newKpgzs)
-    },
-    []
-  );
+  const handleChangeKpgzs = useCallback((newKpgzs) => {
+    setKpgzs(newKpgzs);
+  }, []);
 
-  const handleChangeInn = useCallback(
-    (newInn) => {
-      setInn(newInn);
-    },
-    []
-  );
+  const handleChangeInn = useCallback((newInn) => {
+    setInn(newInn);
+  }, []);
 
   const refreshFilters = useCallback(() => {
-    setFilters({kpgzs, inn})
-  }, [kpgzs, inn])
+    setFilters({ kpgzs, inn });
+  }, [kpgzs, inn]);
 
   return (
     <div className="App">
-      <Search filters={filters} onChange={handleChangeInn} onClickSearch={refreshFilters}/>
+      <Search
+        filters={filters}
+        onChange={handleChangeInn}
+        onClickSearch={refreshFilters}
+      />
       <Box display="flex" flexDirection="row">
         <Filter filters={filters} onChange={handleChangeKpgzs} />
         <ListItems filters={filters} />
