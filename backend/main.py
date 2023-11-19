@@ -16,10 +16,21 @@ def search_suppliers():
     
     inn = request.args.get('inn')
     kpgzs = request.args.get('kpgzs')
-    exp_weight = int(request.args.get('exp_weight', 1))
-    act_weight = int(request.args.get('act_weight', 1))
-    rel_weight = int(request.args.get('rel_weight', 1))
-    sped_weight = int(request.args.get('sped_weight', 1))
+    sortby = request.args.get('sortby')
+
+    weights = {'experienced': 1, 
+                      'reliable': 1,
+                      'active': 1, 
+                      'speedily': 1}
+
+    if sortby in weights:
+        weights[sortby] *= 2
+    
+    exp_weight = weights['experienced']
+    act_weight = weights['active']
+    rel_weight = weights['reliable']
+    sped_weight = weights['speedily']
+
     if kpgzs:
         kpgzs = kpgzs.split(',')
 
