@@ -29,7 +29,7 @@ function App() {
         onClickSearch={refreshFilters}
       />
       <Box display="flex" flexDirection="row">
-        <Filter filters={filters} onChange={handleChangeKpgzs} />
+        <Filter filters={filters} onChangeKpgz={handleChangeKpgzs} />
         <ListItems filters={filters} />
       </Box>
       {/* <SupersetEmbedded supplier_inn={7720518494} /> */}

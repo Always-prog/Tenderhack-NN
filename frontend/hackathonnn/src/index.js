@@ -4,6 +4,7 @@ import "./index.css";
 import App from "./App";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import reportWebVitals from "./reportWebVitals";
+import Details from './components/details'
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -13,8 +14,8 @@ const router = createBrowserRouter([
     element: <App />,
   },
   {
-    path: "/detail",
-    element: <div>Detail</div>,
+    path: "/details/",
+    element: <Details />,
   },
 ]);
 

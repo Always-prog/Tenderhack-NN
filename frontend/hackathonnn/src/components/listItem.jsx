@@ -1,6 +1,7 @@
 import * as React from 'react';
-import {List , ListItem ,  ListItemButton, ListItemText,  Checkbox, Box, Divider} from '@mui/material';
+import {List , ListItem ,  ListItemButton, ListItemText,  Checkbox, Box, Divider, Button} from '@mui/material';
 import { useState } from 'react';
+import Details from './details';
 import { useEffect } from 'react';
 import {baseUrl} from '../constants';
 
@@ -44,9 +45,9 @@ export default function ListItems({filters}) {
   }, [JSON.stringify(filters)])
 
   return (
+    <>
     <div className='List'>
     <List dense sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-
       {!isLoading ? suppliers.map((supplier) => {
         const { supplier_inn, speedily, kpgzs, experience, reliability, activity } = supplier;
         const labelId = `checkbox-list-secondary-label-${supplier_inn}`;
@@ -71,6 +72,8 @@ export default function ListItems({filters}) {
         );
       }) : <div className='loading'>Загрузка данных...</div>} 
     </List>
+    <Button variant="contained">Сравнить выбранные</Button>
     </div>
+    </>
   );
 }

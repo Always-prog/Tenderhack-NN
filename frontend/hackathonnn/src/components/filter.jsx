@@ -1,12 +1,12 @@
 import React from 'react'
-import { TextField, OutlinedInput, Slider, FormGroup, FormControlLabel, Checkbox, ListItemText, MenuItem, Box, Typography, FormControl, InputLabel, Select, Button, IconButton } from '@mui/material'
+import { TextField, OutlinedInput, Slider, FormGroup, FormControlLabel, Checkbox, ListItemText, MenuItem, Box, Typography, FormControl, InputLabel, Select, Button, IconButton, RadioGroup, Radio } from '@mui/material'
 import { GKPZ, alfafit } from './utils/alfavit'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useState } from 'react';
 import { useCallback } from 'react';
 
-export default function Filter({onChange}) {
+export default function Filter({onChangeKpgz, onChangeSortBy}) {
   const [hiddenRegion, SetHiddenRegion] = useState(false);
   const [hiddenKPGZ, SetHiddenKPGZ] = useState(false);
   const [value, setValue] = useState({ a: 100, b: 100, c: 100 });
@@ -22,8 +22,6 @@ export default function Filter({onChange}) {
   const onChangeWeights = (event, newValue) => {
     setValue(newValue);
   };
-
-
 
   // очистить фильтры
   return (
@@ -70,20 +68,19 @@ export default function Filter({onChange}) {
               label="Поиск по КПГЗ"
               type="search"
               onChange={(event) => {
-                onChange([event.target.value])
+                onChangeKpgz([event.target.value])
               }}
             />
           </div>
         </FormControl>}
       <Box display='flex' flexDirection='column' justifyContent='space-between' pt='16px'>
-        <Typography alignItems='center' flexGrow={1} variant="h6" pb='16px'>Оценки поставщика</Typography>
-        <FormGroup>
-          <FormControlLabel control={<Checkbox defaultChecked />} label="По умолчанию" />
-          <FormControlLabel control={<Checkbox />} label="Самый опытный" />
-          <FormControlLabel control={<Checkbox />} label="Самый надежный" />
-          <FormControlLabel control={<Checkbox />} label="Самый активный" />
-          <FormControlLabel control={<Checkbox />} label="Самый быстрый" />
-        </FormGroup>
+        <Typography alignItems='center' flexGrow={1} variant="h6" pb='16px'>Сортировать по показателю</Typography>
+        <RadioGroup>
+          <FormControlLabel value="experienced" control={<Radio />} onChange={onChangeSortBy} label="Самый опытный" />
+          <FormControlLabel value="reliable" control={<Radio />} label="Самый надежный" />
+          <FormControlLabel value="active" control={<Radio />} label="Самый активный" />
+          <FormControlLabel value="speedily" control={<Radio />} label="Самый быстрый" />
+        </RadioGroup>
       </Box>
       <Box display='flex' flexDirection='column' justifyContent='space-between' pt='16px'>
         <Typography alignItems='center' flexGrow={1} variant="h6" pb='16px'>
