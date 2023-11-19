@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Search from './components/search';
+import SupersetEmbedded from './components/superset';
 import Filter from './components/filter';
 import ListItems from './components/listItem';
 import { Box } from '@mui/material';
@@ -45,6 +46,7 @@ function App() {
 <Filter />
 <ListItems />
 </Box>
+<SupersetEmbedded supplier_inn={7720518494}/>
 </div>
 
   );
