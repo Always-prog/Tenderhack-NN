@@ -32,7 +32,7 @@ def search_suppliers():
         return exp + act + sped + rel
 
     if inn:
-        return Supplier(int(inn)).supplier_info
+        return [Supplier(int(inn)).supplier_info]
 
     if kpgzs:
         suppliers = search_suppliers_by_kpgzs(kpgzs)
