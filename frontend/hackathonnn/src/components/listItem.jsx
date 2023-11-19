@@ -58,7 +58,12 @@ export default function ListItems({filters}) {
             <div>
               <ListItemText id={labelId} primary={`ИНН ${supplier_inn}`} />
               <ListItemText id={labelId} primary={`Рейтинг ${speedily + experience + activity + reliability}`} />
+              <ListItemText id={labelId} primary={`Поставщик ${(experience == 0) ? 'не' : ''}опытный (${experience})` +
+                                                    ` ${(speedily > 0) ? 'Доставляет быстрее срока' : 'Срывает сроки'} (${speedily})` +
+                                                    ` ${(activity > 0) ? 'Активный' : 'Неактивный'} (${activity})` +
+                                                    ` ${(reliability > 0) ? 'Надёжный' : 'Ненадёжный'} поставщик (${reliability})`} />
               <ListItemText id={labelId} primary={`КПГЗ ${kpgzs.join(',')}`} />
+              <br></br>
             </div>
             <Divider/>
           </ListItem>
