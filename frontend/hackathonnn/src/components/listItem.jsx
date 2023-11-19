@@ -57,7 +57,7 @@ export default function ListItems({filters}) {
             disablePadding
           >
             <div>
-              <ListItemText id={labelId} primary={`ИНН ${supplier_inn}`} />
+              <a href={`/details/${supplier_inn}`} target={'_blank'}><ListItemText id={labelId} primary={`ИНН ${supplier_inn}`}/></a>
               <ListItemText id={labelId} primary={`Рейтинг ${speedily + experience + activity + reliability}`} />
               <ListItemText id={labelId} primary={`Поставщик ${(experience == 0) ? 'не' : ''}опытный (${experience})` +
                                                     ` ${(speedily > 0) ? 'Доставляет быстрее срока' : 'Срывает сроки'} (${speedily})` +

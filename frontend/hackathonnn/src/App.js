@@ -32,7 +32,6 @@ function App() {
         <Filter filters={filters} onChangeKpgz={handleChangeKpgzs} />
         <ListItems filters={filters} />
       </Box>
-      {/* <SupersetEmbedded supplier_inn={7720518494} /> */}
     </div>
   );
 }
