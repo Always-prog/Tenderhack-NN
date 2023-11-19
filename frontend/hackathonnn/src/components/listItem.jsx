@@ -67,6 +67,7 @@ export default function ListItems({filters}) {
                                                     ` ${(activity > 0) ? 'Активный' : 'Неактивный'} (${activity})` +
                                                     ` ${(reliability > 0) ? 'Надёжный' : 'Ненадёжный'} поставщик (${reliability})`} />
               <ListItemText id={labelId} primary={`КПГЗ ${kpgzs.join(',')}`} style={{overflowWrap: 'anywhere'}} />
+              <a href={`/compare/market/${supplier_inn}?kpgzs=${kpgzs.join(',')}`} target="_blank" style={{position: 'absolute', right: 0, top: 0}}>Сравнить с рынком </a>
               <br></br>
             </div>
             <Divider/>

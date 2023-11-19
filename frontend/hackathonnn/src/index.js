@@ -5,6 +5,7 @@ import App from "./App";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import reportWebVitals from "./reportWebVitals";
 import Details from './components/details'
+import CompareMarket from './components/compareMarket'
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -16,6 +17,10 @@ const router = createBrowserRouter([
   {
     path: "/details/:inn",
     element: <Details />,
+  },
+  {
+    path: "/compare/market/:inn",
+    element: <CompareMarket />,
   },
 ]);
 
