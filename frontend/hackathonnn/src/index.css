@@ -47,6 +47,14 @@ iframe {
     clip-path: inset(0 3ch 0 0);
     animation: l 1s steps(4) infinite;
 }
+.compare {
+    width: 700px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    background-color: #ffffff;
+    padding: 24px;
+}
   
 @keyframes l {
 to {
