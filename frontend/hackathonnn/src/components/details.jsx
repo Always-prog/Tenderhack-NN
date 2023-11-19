@@ -8,12 +8,14 @@ export default function Details() {
   const {inn} = useParams();
   
   return (
-    <div className='details'>
+    <div>
         <h4>Поставщик: ИНН {inn}</h4>
 
-        <SupersetEmbedded supplier_inn={inn}/>
+        <div class='details'>
+          <img src={placeholder}/>
 
-        <img src={placeholder} />
+          <SupersetEmbedded supplier_inn={inn}/>
+        </div>
     </div>
   )
 }
