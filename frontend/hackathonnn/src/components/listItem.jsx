@@ -26,13 +26,16 @@ export default function ListItems({filters}) {
 
   useEffect(() => {
     setIsLoading(true)
-    const { kpgzs = [], inn } = filters;
+    const { kpgzs = [], inn, sortby } = filters;
     const stringFilters = []
     if (kpgzs.length){
       stringFilters.push(`kpgzs=${kpgzs[0]}`)
     }
     if (inn){
       stringFilters.push(`inn=${inn}`)
+    }
+    if (sortby){
+      stringFilters.push(`sortby=${sortby}`)
     }
 
     const url = `${baseUrl}/search${stringFilters.length ? '?' + stringFilters.join('&') : ''}`
@@ -57,13 +60,14 @@ export default function ListItems({filters}) {
             disablePadding
           >
             <div>
-              <ListItemText id={labelId} primary={`ИНН ${supplier_inn}`} />
+              <a href={`/details/${supplier_inn}`} target={'_blank'}><ListItemText id={labelId} primary={`ИНН ${supplier_inn}`}/></a>
               <ListItemText id={labelId} primary={`Рейтинг ${speedily + experience + activity + reliability}`} />
               <ListItemText id={labelId} primary={`Поставщик ${(experience == 0) ? 'не' : ''}опытный (${experience})` +
                                                     ` ${(speedily > 0) ? 'Доставляет быстрее срока' : 'Срывает сроки'} (${speedily})` +
                                                     ` ${(activity > 0) ? 'Активный' : 'Неактивный'} (${activity})` +
                                                     ` ${(reliability > 0) ? 'Надёжный' : 'Ненадёжный'} поставщик (${reliability})`} />
-              <ListItemText id={labelId} primary={`КПГЗ ${kpgzs.join(',')}`} />
+              <ListItemText id={labelId} primary={`КПГЗ ${kpgzs.join(',')}`} style={{overflowWrap: 'anywhere'}} />
+              <a href={`/compare/market/${supplier_inn}?kpgzs=${kpgzs.join(',')}`} target="_blank" style={{position: 'absolute', right: 0, top: 0}}>Сравнить с рынком </a>
               <br></br>
             </div>
             <Divider/>
