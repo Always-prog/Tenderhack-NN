@@ -1,9 +1,13 @@
 import * as React from 'react';
 import {List , ListItem ,  ListItemButton, ListItemText,  Checkbox, Box, Divider} from '@mui/material';
 import { useState } from 'react';
+import { useEffect } from 'react';
+import {baseUrl} from '../constants';
 
-export default function ListItems() {
+export default function ListItems({filters}) {
   const [checked, setChecked] = useState([1]);
+  const [suppliers, setSuppliers] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleToggle = (value) => () => {
     const currentIndex = checked.indexOf(value);
@@ -18,32 +22,49 @@ export default function ListItems() {
     setChecked(newChecked);
   };
 
+
+  useEffect(() => {
+    setIsLoading(true)
+    const { kpgzs = [], inn } = filters;
+    const stringFilters = []
+    if (kpgzs.length){
+      stringFilters.push(`kpgzs=${kpgzs[0]}`)
+    }
+    if (inn){
+      stringFilters.push(`inn=${inn}`)
+    }
+
+    const url = `${baseUrl}/search${stringFilters.length ? '?' + stringFilters.join('&') : ''}`
+    fetch(url).then(res => res.json()).then(json => {
+      setSuppliers(json)
+    }).finally(res => {
+      setIsLoading(false)
+    })
+    
+  }, [JSON.stringify(filters)])
+
   return (
     <div className='List'>
     <List dense sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-      {[0, 1, 2, 3].map((value) => {
-        const labelId = `checkbox-list-secondary-label-${value}`;
+
+      {!isLoading ? suppliers.map((supplier) => {
+        const { supplier_inn, speedily, kpgzs, experience, reliability, activity } = supplier;
+        const labelId = `checkbox-list-secondary-label-${supplier_inn}`;
         return (
           <ListItem
-            key={value}
-            secondaryAction={
-              <Checkbox
-                edge="end"
-                onChange={handleToggle(value)}
-                checked={checked.indexOf(value) !== -1}
-                inputProps={{ 'aria-labelledby': labelId }}
-              />
-            }
+            key={supplier_inn}
             disablePadding
           >
-            <ListItemButton>
-              <ListItemText id={labelId} primary={`ИНН ${value + 1}`} />
-            </ListItemButton>
+            <div>
+              <ListItemText id={labelId} primary={`ИНН ${supplier_inn}`} />
+              <ListItemText id={labelId} primary={`Рейтинг ${speedily + experience + activity + reliability}`} />
+              <ListItemText id={labelId} primary={`КПГЗ ${kpgzs.join(',')}`} />
+            </div>
             <Divider/>
           </ListItem>
        
         );
-      })}
+      }) : <div className='loading'>Загрузка данных...</div>} 
     </List>
     </div>
   );

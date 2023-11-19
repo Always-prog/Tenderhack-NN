@@ -4,11 +4,11 @@ import { GKPZ, alfafit } from './utils/alfavit'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useState } from 'react';
+import { useCallback } from 'react';
 
-export default function Filter() {
+export default function Filter({onChange}) {
   const [hiddenRegion, SetHiddenRegion] = useState(false);
   const [hiddenKPGZ, SetHiddenKPGZ] = useState(false);
-  const [kodGKPZ, SetKodGKPZ] = useState([]);
   const [value, setValue] = useState({ a: 100, b: 100, c: 100 });
 
   const hidRegion = () => {
@@ -19,34 +19,11 @@ export default function Filter() {
     SetHiddenKPGZ(!hiddenKPGZ);
   }
 
-  const ITEM_HEIGHT = 48;
-  const ITEM_PADDING_TOP = 8;
-  const MenuProps = {
-    PaperProps: {
-      style: {
-        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      },
-    },
-  };
-
-  const handleChange = (event) => {
-    const {
-      target: { value },
-    } = event;
-    SetKodGKPZ(
-      typeof value === 'string' ? value.split(',') : value,
-    );
-  };
-
-  const onChange = (event, newValue) => {
+  const onChangeWeights = (event, newValue) => {
     setValue(newValue);
   };
 
-  function test_search(e) {
-    fetch('http://127.0.0.1:5000/search?inn=264073428').then (res => res.json()).then(json => {
-      console.log(json)
-    })
-  }
+
 
   // очистить фильтры
   return (
@@ -92,25 +69,11 @@ export default function Filter() {
               id="kpgz-search"
               label="Поиск по КПГЗ"
               type="search"
+              onChange={(event) => {
+                onChange([event.target.value])
+              }}
             />
-            <Button variant="contained" onClick={test_search}>Найти</Button>
           </div>
-
-          {/* <Select
-          multiple
-          value={kodGKPZ}
-          onChange={handleChange}
-          input={<OutlinedInput/>}
-          renderValue={(selected) => selected.join(', ')}
-          MenuProps={MenuProps}
-        >
-          {GKPZ.map((number,index) => (
-            <MenuItem key={number[index]} value={number}>
-              <Checkbox checked={kodGKPZ.indexOf(number) > -1} />
-              <ListItemText primary={number} />
-            </MenuItem>
-          ))}
-        </Select> */}
         </FormControl>}
       <Box display='flex' flexDirection='column' justifyContent='space-between' pt='16px'>
         <Typography alignItems='center' flexGrow={1} variant="h6" pb='16px'>Оценки поставщика</Typography>
@@ -129,7 +92,7 @@ export default function Filter() {
           <Typography>Опыт</Typography>
           <Box display='flex' flexDirection='row' alignItems="center">
             <Typography mr='10px'>0</Typography>
-            <Slider aria-label="Volume" value={value.a} onChange={onChange} />
+            <Slider aria-label="Volume" value={value.a} onChange={onChangeWeights} />
             <Typography ml='10px'>25%</Typography>
           </Box>
         </Box>
@@ -137,7 +100,7 @@ export default function Filter() {
           <Typography>Надежность</Typography>
           <Box display='flex' flexDirection='row' alignItems="center">
             <Typography mr='10px'>0</Typography>
-            <Slider aria-label="Volume" value={value.b} onChange={onChange} />
+            <Slider aria-label="Volume" value={value.b} onChange={onChangeWeights} />
             <Typography ml='10px'>25%</Typography>
           </Box>
         </Box>
@@ -145,12 +108,13 @@ export default function Filter() {
           <Typography>Срок поставки</Typography>
           <Box display='flex' flexDirection='row' alignItems="center">
             <Typography mr='10px'>0</Typography>
-            <Slider aria-label="Volume" value={value.c} onChange={onChange} />
+            <Slider aria-label="Volume" value={value.c} onChange={onChangeWeights} />
             <Typography ml='10px'>25%</Typography>
           </Box>
         </Box>
       </Box>
       <Button>Очистить</Button>
+
     </div>
   )
 }

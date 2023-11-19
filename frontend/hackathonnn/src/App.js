@@ -1,54 +1,41 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import Search from './components/search';
-import SupersetEmbedded from './components/superset';
-import Filter from './components/filter';
-import ListItems from './components/listItem';
-import { Box } from '@mui/material';
-
-const sendHttpRequest = async (url, method, data, headers) => {
-  try {
-    const response = await axios({
-      method,
-      url,
-      data,
-      headers,
-    });
-
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
+import React, { useCallback, useState } from "react";
+import Search from "./components/search";
+import SupersetEmbedded from "./components/superset";
+import Filter from "./components/filter";
+import ListItems from "./components/listItem";
+import { Box } from "@mui/material";
 
 function App() {
-  const [requestUrl, setRequestUrl] = useState('https://jsonplaceholder.typicode.com/todos/1');
-  const [responseData, setResponseData] = useState(null);
+  const [filters, setFilters] = useState({});
+  const [kpgzs, setKpgzs] = useState();
+  const [inn, setInn] = useState();
+  const handleChangeKpgzs = useCallback(
+    (newKpgzs) => {
+      setKpgzs(newKpgzs)
+    },
+    []
+  );
 
-  const fetchData = async () => {
-    try {
-      const result = await sendHttpRequest(requestUrl, 'get', null, {});
+  const handleChangeInn = useCallback(
+    (newInn) => {
+      setInn(newInn);
+    },
+    []
+  );
 
-      setResponseData(result);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
-
-  const handleUrlChange = (event) => {
-    setRequestUrl(event.target.value);
-  };
+  const refreshFilters = useCallback(() => {
+    setFilters({kpgzs, inn})
+  }, [kpgzs, inn])
 
   return (
-<div className='App'>
-<Search />
-<Box display='flex' flexDirection='row'>
-<Filter />
-<ListItems />
-</Box>
-<SupersetEmbedded supplier_inn={7720518494}/>
-</div>
-
+    <div className="App">
+      <Search filters={filters} onChange={handleChangeInn} onClickSearch={refreshFilters}/>
+      <Box display="flex" flexDirection="row">
+        <Filter filters={filters} onChange={handleChangeKpgzs} />
+        <ListItems filters={filters} />
+      </Box>
+      {/* <SupersetEmbedded supplier_inn={7720518494} /> */}
+    </div>
   );
 }
 

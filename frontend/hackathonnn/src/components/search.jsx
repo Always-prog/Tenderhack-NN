@@ -6,37 +6,17 @@ import { useState,  useEffect } from 'react';
 import { Box, Input, Typography,InputAdornment } from '@mui/material';
 import {Button, Paper, InputBase, Divider, IconButton} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import { useCallback } from 'react';
 
 // import SearchIcon from '@mui/icons-material/Search';
 // import DirectionsIcon from '@mui/icons-material/Directions';
 
-export default function Search() {
-// const [item, SetItem] = useState([]);
-
-//     const handleSearch = (evt) => {
-//         const { value } = evt.target;
-//         if (value === '') { dispatch(clearSearch()); }
-//         else { dispatch(changeUsersField({ search: value })); }
-//     };
-//     const hasQuery = search.trim() !== '';
-
-
-//    const search = async () => {
-//         const params = new
-//             URLSearchParams({ q: search, sort: 'repositories'});
-    
-//         const response = await
-//             fetch(`${import.meta.env.VITE_APP_SEARCH_URL}?${params}`);
-//         if (!response.ok) {
-//             throw new
-//                 Error("Ошибка!");
-//         }
-//         return await response.json();
-//     }
-
-//   useEffect(()=>{
-
-//   })
+export default function Search({onChange, onClickSearch}) {
+  const [inn, setInn] = useState()
+  const handleSearchClick = useCallback(() => {
+    onChange(inn)
+    onClickSearch()
+  }, [onChange, onClickSearch, inn])
 
 return (
     <div className='search'>
@@ -49,12 +29,15 @@ return (
       <SearchIcon />
     </InputAdornment>
       <InputBase
+        onChange={(event) => {
+          setInn(event.target.value)
+        }}
         sx={{ ml: 1, flex: 1 }}
         placeholder="Введите ИНН поставщика"
         inputProps={{ 'aria-label': 'search google maps' }}>
     </InputBase>
       <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
-      <Button variant="contained">Найти</Button>
+      <Button variant="contained" onClick={handleSearchClick}>Найти</Button>
     </Paper>
     </div>
   );
