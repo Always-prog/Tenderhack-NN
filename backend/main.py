@@ -17,14 +17,27 @@ def search_suppliers():
     
     inn = request.args.get('inn')
     kpgzs = request.args.get('kpgzs')
+    exp_weight = int(request.args.get('exp_weight', 1))
+    act_weight = int(request.args.get('act_weight', 1))
+    rel_weight = int(request.args.get('rel_weight', 1))
+    sped_weight = int(request.args.get('sped_weight', 1))
     if kpgzs:
         kpgzs = kpgzs.split(',')
 
+    def supplier_sort_key(supplier: Supplier):
+        exp = supplier.experience_metric() * exp_weight
+        act = supplier.activity_metric() * act_weight
+        rel = supplier.reliability_metric() * rel_weight
+        sped = supplier.speedily_metric() * sped_weight
+        return exp + act + sped + rel
+
     if inn:
-        return Supplier(int(inn)).supplier_info
+        return [Supplier(int(inn)).supplier_info]
 
     if kpgzs:
-        result = jsonify([s.supplier_info for s in search_suppliers_by_kpgzs(kpgzs)])
+        suppliers = search_suppliers_by_kpgzs(kpgzs)
+        suppliers.sort(key=supplier_sort_key, reverse=True)
+        return jsonify([supp.supplier_info for supp in suppliers])
 
     return result
 
