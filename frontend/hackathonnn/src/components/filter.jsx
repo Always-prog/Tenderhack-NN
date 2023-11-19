@@ -18,6 +18,9 @@ export default function Filter({onChangeKpgz, onChangeSortBy}) {
   const hidKPGZ = () => {
     SetHiddenKPGZ(!hiddenKPGZ);
   }
+  const handleChangeSortBy = (event) => {
+    onChangeSortBy(event.target.value)
+  }
 
   const onChangeWeights = (event, newValue) => {
     setValue(newValue);
@@ -76,10 +79,10 @@ export default function Filter({onChangeKpgz, onChangeSortBy}) {
       <Box display='flex' flexDirection='column' justifyContent='space-between' pt='16px'>
         <Typography alignItems='center' flexGrow={1} variant="h6" pb='16px'>Сортировать по показателю</Typography>
         <RadioGroup>
-          <FormControlLabel value="experienced" control={<Radio />} onChange={onChangeSortBy} label="Самый опытный" />
-          <FormControlLabel value="reliable" control={<Radio />} label="Самый надежный" />
-          <FormControlLabel value="active" control={<Radio />} label="Самый активный" />
-          <FormControlLabel value="speedily" control={<Radio />} label="Самый быстрый" />
+          <FormControlLabel value="experienced" control={<Radio />} onChange={handleChangeSortBy} label="Самый опытный" />
+          <FormControlLabel value="reliable" control={<Radio />} onChange={handleChangeSortBy} label="Самый надежный" />
+          <FormControlLabel value="active" control={<Radio />} onChange={handleChangeSortBy} label="Самый активный" />
+          <FormControlLabel value="speedily" control={<Radio />} onChange={handleChangeSortBy} label="Самый быстрый" />
         </RadioGroup>
       </Box>
       <Box display='flex' flexDirection='column' justifyContent='space-between' pt='16px'>
