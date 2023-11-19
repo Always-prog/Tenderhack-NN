@@ -12,8 +12,7 @@ def search_suppliers():
     TODO: Реализовать поиск по ИНН или по тексту продажи.
     TODO: Реализовать возврат в формате данных о поставщике вместе с его рейтигном (рейтинг надо считать)
     """
-    
-    result = ''
+
     
     inn = request.args.get('inn')
     kpgzs = request.args.get('kpgzs')
@@ -39,7 +38,7 @@ def search_suppliers():
         suppliers.sort(key=supplier_sort_key, reverse=True)
         return jsonify([supp.supplier_info for supp in suppliers])
 
-    return result
+    return jsonify([])
 
 
 @app.route("/compare/bymarket", methods=["GET"])
