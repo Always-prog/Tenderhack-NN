@@ -26,13 +26,16 @@ export default function ListItems({filters}) {
 
   useEffect(() => {
     setIsLoading(true)
-    const { kpgzs = [], inn } = filters;
+    const { kpgzs = [], inn, sortby } = filters;
     const stringFilters = []
     if (kpgzs.length){
       stringFilters.push(`kpgzs=${kpgzs[0]}`)
     }
     if (inn){
       stringFilters.push(`inn=${inn}`)
+    }
+    if (sortby){
+      stringFilters.push(`sortby=${sortby}`)
     }
 
     const url = `${baseUrl}/search${stringFilters.length ? '?' + stringFilters.join('&') : ''}`
@@ -63,7 +66,7 @@ export default function ListItems({filters}) {
                                                     ` ${(speedily > 0) ? 'Доставляет быстрее срока' : 'Срывает сроки'} (${speedily})` +
                                                     ` ${(activity > 0) ? 'Активный' : 'Неактивный'} (${activity})` +
                                                     ` ${(reliability > 0) ? 'Надёжный' : 'Ненадёжный'} поставщик (${reliability})`} />
-              <ListItemText id={labelId} primary={`КПГЗ ${kpgzs.join(',')}`} />
+              <ListItemText id={labelId} primary={`КПГЗ ${kpgzs.join(',')}`} style={{overflowWrap: 'anywhere'}} />
               <br></br>
             </div>
             <Divider/>
